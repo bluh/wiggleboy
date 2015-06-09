@@ -15,6 +15,8 @@ V3 right;
 V3 left;
 V3 mp;
 
+Ray mouseRay;
+
 BaseShape makeCube(float size, V3 position){
     V3[] vs = {
         new V3(0,0,0),
@@ -61,6 +63,7 @@ void setup(){
         (100 + zoom * 25) * sin(camx * PI / height) + subject.y,
         (100 + zoom * 25) * cos(camy * PI / height) * cos(camx * PI / height) + subject.z
     );
+    mouseRay = new Ray(cam, subject);
     sphereDetail(5,3);
 }
 
@@ -76,11 +79,16 @@ void mousePressed(){
 //    vecs.add(new V3(left));
 //    vecs.add(new V3(subject));
 //    vecs.add(new V3(mp));
-    Ray mouseRay = new Ray(cam, mp);
     println("Firing ray...");
+    V3 offset = new V3();
+    if(mouseButton == LEFT){
+        offset.set(0,-5,0);
+    }else if(mouseButton == RIGHT){
+        offset.set(0,5,0);
+    }
     for(V3 vec: vecs){
         if(mouseRay.distanceToPoint(vec) <= 10){
-            vec.move(0,5,0);
+            vec.move(offset);
         }
     }
 }
@@ -143,15 +151,24 @@ void draw(){
     line(subject.x, subject.y, subject.z, subject.x, subject.y, subject.z + 50);
     strokeWeight(1);
     stroke(0,0,0);
+    
+    mouseRay.set(cam, mp);
     for(V3 v: vecs){
+        if(mouseRay.distanceToPoint(v) <= 5){
+            fill(255,255,0);
+        }else{
+            fill(255,255,255);
+        }
         v.visualize();
     }
+    
     for(int x = -10; x <= 10; x++){
         line(x * 50,0,-500,x * 50, 0 ,500);
     }
     for(int y = -10; y <= 10; y++){
         line(-500,0,y * 50,500, 0 ,y * 50);
     }
+    
     for(BaseShape b: shapes){
         b.render();
     }
