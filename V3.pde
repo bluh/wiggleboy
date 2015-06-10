@@ -80,6 +80,10 @@ class V3{
         return this.x * ref.x + this.y * ref.y + this.z * ref.z;
     }
     
+    float dot(float x, float y, float z){
+        return this.x * x + this.y * y + this.z * z;
+    }
+    
     V3 cross(V3 ref){
         return new V3(
             this.y * ref.z - ref.y * this.z,

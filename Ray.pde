@@ -21,4 +21,18 @@ class Ray{
         float a = (float) Math.acos(unit.dot(pUnit)/(unit.mag() * pUnit.mag()));
         return (start.sub(point).mag() * (float) Math.sin(a));
     }
+    
+    float[] connectToLine(V3 pStart, V3 pUnit){
+        pUnit = pUnit.unit();
+        float a = unit.mag() * unit.mag();
+        float b = unit.dot(pUnit);
+        float c = pUnit.mag() * pUnit.mag();
+        float d = unit.dot(start.sub(pStart));
+        float e = pUnit.dot(start.sub(pStart));
+        float[] result = {
+            ((b * e - c * d)/(a * c - b * b)),
+            ((a * e - b * d)/(a * c - b * b))
+        }
+        return result;
+    }
 }

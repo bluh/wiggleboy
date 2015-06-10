@@ -9,6 +9,8 @@ float angle = PI/3.0;
 float zoom = 12;
 float cameraZ;
 
+int selectionMode = 0; //0 == point, 1 == line, 2 == facee
+
 V3 top;
 V3 bottom;
 V3 right;
@@ -71,15 +73,7 @@ void mouseWheel(MouseEvent evt){
     zoom = max(0,zoom + evt.getCount());
 }
 
-void mousePressed(){
-//    vecs.add(new V3(cam));
-//    vecs.add(new V3(top));
-//    vecs.add(new V3(bottom));
-//    vecs.add(new V3(right));
-//    vecs.add(new V3(left));
-//    vecs.add(new V3(subject));
-//    vecs.add(new V3(mp));
-    println("Firing ray...");
+void mouseClicked(){
     V3 offset = new V3();
     if(mouseButton == LEFT){
         offset.set(0,-5,0);
@@ -154,7 +148,7 @@ void draw(){
     
     mouseRay.set(cam, mp);
     for(V3 v: vecs){
-        if(mouseRay.distanceToPoint(v) <= 5){
+        if(mouseRay.distanceToPoint(v) <= 10){
             fill(255,255,0);
         }else{
             fill(255,255,255);
