@@ -29,9 +29,15 @@ class Ray{
         float c = pUnit.mag() * pUnit.mag();
         float d = unit.dot(start.sub(pStart));
         float e = pUnit.dot(start.sub(pStart));
-        float[] result = {
-            ((b * e - c * d)/(a * c - b * b)),
-            ((a * e - b * d)/(a * c - b * b))
+        float[] result;
+        if(a * c - b * b == 0){
+            //these lines are parallel.
+            result = new float[] {0,0};
+        }else{
+            result = new float[] {
+                ((b * e - c * d)/(a * c - b * b)),
+                ((a * e - b * d)/(a * c - b * b))
+            };
         }
         return result;
     }
