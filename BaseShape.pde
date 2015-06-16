@@ -1,22 +1,24 @@
 class BaseShape{
     V3 position;
     V3[] verticies;
+    Line[] lines;
     Face[] faces;
     
-    BaseShape(V3[] verts, V3[][] vertsData){
-        this(verts, vertsData, new V3(0,0,0));
+    BaseShape(V3[] verts, Line[] lines, Line[][] faceData){
+        this(verts, lines, faceData, new V3(0,0,0));
     }
     
-    BaseShape(V3[] verts, V3[][] vertsData, V3 position){
+    BaseShape(V3[] verts, Line[] lines, Line[][] faceData, V3 position){
         this.position = position;
         this.verticies = verts;
-        faces = new Face[vertsData.length];
+        this.lines = lines;
+        faces = new Face[faceData.length];
         int index = 0;
         for(V3 vert: verts){
             vert.move(position);
         }
-        for(V3[] vExtract: vertsData){
-            faces[index] = new Face(vExtract);
+        for(Line[] lineEx: faceData){
+            faces[index] = new Face(lineEx);
             index++;
         }
     }
@@ -53,5 +55,3 @@ class BaseShape{
         }
     }
 }
-                
-                
