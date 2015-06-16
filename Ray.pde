@@ -41,4 +41,45 @@ class Ray{
         }
         return result;
     }
+    
+    boolean intersectsFace(Face obj){
+        V3 p0 = obj.verticies[0];
+        V3 p1 = null;
+        V3 p2 = null;
+        V3 norm = null;
+        V3 intersect = null;
+        V3 last = null;
+        for(int i = 1; i < obj.verticies.length; i++){
+            if(p1 == null){
+                p1 = obj.verticies[i];
+                p2 = obj.verticies[i+1];
+                norm = (p1.sub(p0)).cross(p2.sub(p0)).unit();
+                last = p1;
+                float dist = (p0.sub(start).dot(norm)) / (unit.dot(norm));
+                intersect = start.add(unit.mult(dist));
+                i = i + 1;
+            }
+            if(obj.verticies[i].sub(p0).dot(norm) == 0){
+                V3 u = last.sub(p0);
+                V3 v = obj.verticies[i].sub(p0);
+                V3 w = intersect.sub(p0);
+                float denom = (float) Math.pow(u.dot(v),2) - u.dot(u) * v.dot(v);
+                float uDist = (u.dot(v) * w.dot(v) - v.dot(v) * w.dot(u)) / denom;
+                float vDist = (u.dot(v) * w.dot(u) - u.dot(u) * w.dot(v)) / denom;
+                if(uDist < 1 && uDist > 0 && vDist < 1 && vDist > 0 && uDist + vDist > 0 && uDist + vDist < 1){
+                    return true;
+                }
+                last = obj.verticies[i];
+            }else{
+                p1 = obj.verticies[i];
+                p2 = obj.verticies[i+1];
+                norm = (p1.sub(p0)).cross(p2.sub(p0)).unit();
+                last = p1;
+                float dist = (p0.sub(start).dot(norm)) / (unit.dot(norm));
+                intersect = start.add(unit.mult(dist));
+                i = i + 2;
+            }
+        }
+        return false;
+    }
 }

@@ -2,6 +2,7 @@ class V3{
     float x;
     float y;
     float z;
+    String name;
     
     V3(){
         this(0.0,0.0,0.0);
@@ -13,6 +14,10 @@ class V3{
     
     V3(V3 ref){
         set(ref.x,ref.y,ref.z);
+    }
+    
+    void setName(String name){
+        this.name = name;
     }
     
     V3 move(V3 amt){
@@ -107,10 +112,15 @@ class V3{
     void visualize(){
         translate(x,y,z);
         sphere(5);
+        text(this.toString(),0,0,0);
         translate(-x,-y,-z);
     }
     
     String toString(){
-        return "("+x+", "+y+", "+z+")";
+        if(this.name != null){
+            return this.name;
+        }else{
+            return "("+x+", "+y+", "+z+")";
+        }
     }
 }

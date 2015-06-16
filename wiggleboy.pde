@@ -1,5 +1,6 @@
 BaseShape b;
 ArrayList<BaseShape> shapes;
+ArrayList<V3> verts;
 V3 subject;
 V3 cam;
 float camx;
@@ -8,12 +9,10 @@ float angle = PI/3.0;
 float zoom = 12;
 float cameraZ;
 
-int selectionMode = 1; //0 == point, 1 == line, 2 == face
+int selectionMode = 0; //0 == point, 1 == line, 2 == face
 
 V3 top;
-V3 bottom;
 V3 right;
-V3 left;
 V3 mp;
 
 Ray mouseRay;
@@ -63,11 +62,10 @@ void setup(){
     perspective(PI/3.0, width/height, cameraZ/20.0, cameraZ*10.0);
     subject = new V3();
     shapes = new ArrayList<BaseShape>();
+    verts = new ArrayList<V3>();
     top = new V3();
-    bottom = new V3();
-    left = new V3();
     right = new V3();
-    shapes.add(makeCube(50, new V3(0,-10,0)));
+    shapes.add(makeCube(70, new V3(0,-10,0)));
 //    shapes.add(makeCube(30, new V3(0,-60,0)));
     camx = -height/4;
     camy = width/4;
@@ -84,7 +82,7 @@ void mouseWheel(MouseEvent evt){
     zoom = max(0,zoom + evt.getCount());
 }
 
-void mouseClicked(){
+void mousePressed(){
     V3 offset = new V3();
     if(mouseButton == LEFT){
         offset.set(0,-5,0);
@@ -114,7 +112,7 @@ void mouseClicked(){
         for(BaseShape b: shapes){
             for(Line line: b.lines){
                 float[] res = mouseRay.connectToLine(line.point1, line.point2.sub(line.point1).unit());
-                if(res[1] > 0 && res[1] < line.point2.sub(line.point1).mag()){
+                if(res[1] >= 0 && res[1] <= line.point2.sub(line.point1).mag()){
                     V3 p1 = mouseRay.start.add(mouseRay.unit.mult(res[0]));
                     V3 p2 = line.point1.add(line.point2.sub(line.point1).unit().mult(res[1]));
                     float dist = p2.sub(p1).mag();
@@ -134,7 +132,27 @@ void mouseClicked(){
             lineSelected.point1.move(offset);
             lineSelected.point2.move(offset);
         }
-    }         
+    }else if(selectionMode == 2){
+        Face faceSelected = null;
+        for(BaseShape b: shapes){
+            for(Face face: b.faces){
+                if(mouseRay.intersectsFace(face)){
+                    if(faceSelected == null){
+                        faceSelected = face;
+                    }else{
+                        if(faceSelected.getCenter().sub(cam).mag() > face.getCenter().sub(cam).mag()){
+                            faceSelected = face;
+                        }
+                    }
+                }
+            }           
+        }
+        if(faceSelected != null){
+            for(V3 vert: faceSelected.verticies){
+                vert.move(offset);
+            }
+        }
+    }
 }
 
 void keyPressed(){
@@ -148,7 +166,7 @@ void keyPressed(){
         camy = width/4;
         zoom = 12;
     }else if(key == 't'){
-        selectionMode = 1 - selectionMode;
+        selectionMode = (1 + selectionMode) % 3;
     }
 }
 
@@ -195,6 +213,10 @@ void draw(){
         line(-500,0,y * 50,500, 0 ,y * 50);
     }
     
+    for(V3 v: verts){
+        v.visualize();
+    }
+    
     mouseRay.set(cam, mp);
     for(BaseShape b: shapes){
         if(selectionMode == 0){
@@ -225,6 +247,10 @@ void draw(){
             line.render();
         }
         for(Face face: b.faces){
+            fill(255, 255, 255, 100);
+            if(selectionMode == 2 && mouseRay.intersectsFace(face)){
+                fill(255, 255, 0, 100);
+            }
             face.render();
         }
     }

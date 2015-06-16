@@ -24,11 +24,20 @@ class Face{
             }
         }
         println("total: " + index);
+        println("center: " + getCenter());
+    }
+    
+    V3 getCenter(){
+        V3 center = new V3(0,0,0);
+        for(V3 v: verticies){
+            center.move(v);
+        }
+        return center.mult(1.0 / verticies.length);
     }
     
     void render(){
         beginShape();
-        fill(255,255,255,100);
+//        fill(255,255,255,100);
         noStroke();
         for(V3 d: verticies){
 //            println(d);
@@ -37,4 +46,3 @@ class Face{
         endShape(CLOSE);
     }
 }
-    
