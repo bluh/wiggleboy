@@ -23,7 +23,7 @@ class Face{
                 println("added " + verticies[index]);
             }
         }
-        println("total: " + index);
+        println("total: " + (index + 1));
         println("center: " + getCenter());
     }
     
@@ -37,11 +37,10 @@ class Face{
     
     void render(){
         beginShape();
-//        fill(255,255,255,100);
         noStroke();
         for(V3 d: verticies){
-//            println(d);
             vertex(d.x,d.y,d.z);
         }
         endShape(CLOSE);
     }
+}

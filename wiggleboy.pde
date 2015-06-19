@@ -8,6 +8,7 @@ float camy;
 float angle = PI/3.0;
 float zoom = 12;
 float cameraZ;
+float dt;
 
 int selectionMode = 0; //0 == point, 1 == line, 2 == face
 
@@ -173,6 +174,7 @@ void keyPressed(){
 
 void draw(){
     background(50);
+    dt = dt + 5.0/frameRate;
     if(mousePressed && mouseButton == RIGHT){
         cursor(MOVE);
         camx = min(max(camx - (mouseY - pmouseY), (-height / 2) + 1), (height / 2) - 1);
@@ -223,9 +225,9 @@ void draw(){
         if(selectionMode == 0){
             for(V3 v: b.verticies){
                 if(mouseRay.distanceToPoint(v) <= 10){
-                    fill(255,255,0);
+                    fill(255, 255, 75 + 75 * sin(dt));
                 }else{
-                    fill(255,255,255);
+                    fill(255, 255, 255);
                 }
                 v.visualize();
             }
@@ -241,7 +243,7 @@ void draw(){
                     V3 p2 = line.point1.add(line.point2.sub(line.point1).unit().mult(res[1]));
                     float dist = p2.sub(p1).mag();
                     if(dist <= 5){
-                        stroke(255,255,0);
+                        stroke(255, 255, 75 + 75 * sin(dt));
                     }
                 }
             }
@@ -250,7 +252,7 @@ void draw(){
         for(Face face: b.faces){
             fill(255, 255, 255, 100);
             if(selectionMode == 2 && mouseRay.intersectsFace(face)){
-                fill(255, 255, 0, 100);
+                fill(255, 255, 25 + 25 * sin(dt), 100);
             }
             face.render();
         }

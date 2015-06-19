@@ -1,4 +1,3 @@
-
 class Ray{
     V3 start;
     V3 unit;
@@ -50,7 +49,9 @@ class Ray{
         V3 norm = null;
         V3 intersect = null;
         V3 last = null;
-        for(int i = 1; i < obj.verticies.length; i++){
+        int i;
+        for(int x = 1; x < obj.verticies.length + 1; x++){
+            i = x % obj.verticies.length;
             if(p1 == null){
                 p1 = obj.verticies[i];
                 p2 = obj.verticies[i+1];
@@ -58,7 +59,7 @@ class Ray{
                 last = p1;
                 float dist = (p0.sub(start).dot(norm)) / (unit.dot(norm));
                 intersect = start.add(unit.mult(dist));
-                i = i + 1;
+                i++;
             }
             if(obj.verticies[i].sub(p0).dot(norm) == 0){
                 V3 u = last.sub(p0);
@@ -72,13 +73,14 @@ class Ray{
                 }
                 last = obj.verticies[i];
             }else{
+                p0 = obj.verticies[(4 + i - 1) % 4];
                 p1 = obj.verticies[i];
-                p2 = obj.verticies[i+1];
+                p2 = obj.verticies[(i + 1) % obj.verticies.length];
                 norm = (p1.sub(p0)).cross(p2.sub(p0)).unit();
                 last = p1;
                 float dist = (p0.sub(start).dot(norm)) / (unit.dot(norm));
                 intersect = start.add(unit.mult(dist));
-                i = i + 2;
+                i++;
             }
         }
         return false;
