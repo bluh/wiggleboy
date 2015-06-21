@@ -7,7 +7,6 @@ float camx;
 float camy;
 float angle = PI/3.0;
 float zoom = 12;
-float cameraZ;
 float dt;
 
 int selectionMode = 0; //0 == point, 1 == line, 2 == face
@@ -58,15 +57,15 @@ BaseShape makeCube(float size, V3 position){
 }
 
 void setup(){
-    size(500,500,P3D);
-    cameraZ = ((height/2.0) / tan(PI*60.0/360.0));
-    perspective(PI/3.0, width/height, cameraZ/20.0, cameraZ*10.0);
+    size(800,600,P3D);
+    float cameraZ = ((height/2.0) / tan(PI*60.0/360.0));
+    perspective(angle, (float) width / height, cameraZ/20.0, cameraZ*10.0);
     subject = new V3();
     shapes = new ArrayList<BaseShape>();
     verts = new ArrayList<V3>();
     top = new V3();
     right = new V3();
-    shapes.add(makeCube(70, new V3(0,-10,0)));
+    shapes.add(makeCube(50, new V3(0,0,0)));
 //    shapes.add(makeCube(30, new V3(0,-60,0)));
     camx = -height/4;
     camy = width/4;
@@ -174,7 +173,7 @@ void keyPressed(){
 
 void draw(){
     background(50);
-    dt = dt + 5.0/frameRate;
+    dt = (dt + 10.0/frameRate) % (TWO_PI);
     if(mousePressed && mouseButton == RIGHT){
         cursor(MOVE);
         camx = min(max(camx - (mouseY - pmouseY), (-height / 2) + 1), (height / 2) - 1);
@@ -193,9 +192,9 @@ void draw(){
     );
     
     V3 camAbs = cam.sub(subject);
-    right = camAbs.cross(0,-5,0).unit().mult(tan(angle/2.0) * camAbs.mag()).add(subject);
+    right = camAbs.cross(0,-5,0).unit().mult(tan(angle/2.0) * camAbs.mag() * (float) width / height).add(subject);
     top = camAbs.cross(right.sub(subject)).unit().mult(tan(angle/2.0) * -camAbs.mag()).add(subject);
-    float mx = (2.0 * (width/2 - mouseX)/width) * tan(angle/2.0) * -camAbs.mag();
+    float mx = (2.0 * (width/2 - mouseX)/width) * tan(angle/2.0) * -camAbs.mag() * (float) width / height;
     float my = (2.0 * (height/2 - mouseY)/height) * tan(angle/2.0) * camAbs.mag();
     mp = (right.sub(subject).unit().mult(mx).add(top.sub(subject).unit().mult(my)).add(subject));
     
