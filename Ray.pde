@@ -59,7 +59,6 @@ class Ray{
                 last = p1;
                 float dist = (p0.sub(start).dot(norm)) / (unit.dot(norm));
                 intersect = start.add(unit.mult(dist));
-                i++;
             }
             if(obj.verticies[i].sub(p0).dot(norm) == 0){
                 V3 u = last.sub(p0);
@@ -73,14 +72,14 @@ class Ray{
                 }
                 last = obj.verticies[i];
             }else{
-                p0 = obj.verticies[(4 + i - 1) % 4];
+                p0 = obj.verticies[(obj.verticies.length + i - 1) % obj.verticies.length];
                 p1 = obj.verticies[i];
                 p2 = obj.verticies[(i + 1) % obj.verticies.length];
                 norm = (p1.sub(p0)).cross(p2.sub(p0)).unit();
                 last = p1;
                 float dist = (p0.sub(start).dot(norm)) / (unit.dot(norm));
                 intersect = start.add(unit.mult(dist));
-                i++;
+                i--;
             }
         }
         return false;

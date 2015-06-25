@@ -20,12 +20,12 @@ Ray mouseRay;
 BaseShape makeCube(float size, V3 position){
     V3[] vs = {
         new V3(0,0,0),
-        new V3(0,-size,0),
-        new V3(size,-size,0),
+        new V3(0,size,0),
+        new V3(size,size,0),
         new V3(size,0,0),
         new V3(0,0,size),
-        new V3(0,-size,size),
-        new V3(size,-size,size),
+        new V3(0,size,size),
+        new V3(size,size,size),
         new V3(size,0,size)
     };
     Line[] lines = {
@@ -56,6 +56,38 @@ BaseShape makeCube(float size, V3 position){
     return new BaseShape(vs, lines, faceData, position);
 }
 
+BaseShape makePyramid(float size, float pHeight, V3 position){
+    V3[] vecs = {
+        new V3(0,0,size),
+        new V3(size,0,size),
+        new V3(size,0,0),
+        new V3(0,0,0),
+        new V3(size/2,pHeight,size/2)
+    };
+    Line[] lines = {
+        new Line(vecs[0],vecs[1]),
+        new Line(vecs[1],vecs[2]),
+        new Line(vecs[2],vecs[3]),
+        new Line(vecs[3],vecs[0]), //3
+        new Line(vecs[0],vecs[4]), //4
+        new Line(vecs[1],vecs[4]),
+        new Line(vecs[2],vecs[4]),
+        new Line(vecs[3],vecs[4])
+    };
+    Line[][] faceData = {
+        {lines[0],lines[1],lines[2],lines[3]},
+        {lines[0],lines[4],lines[5]},
+        {lines[1],lines[5],lines[6]},
+        {lines[2],lines[6],lines[7]},
+        {lines[3],lines[7],lines[4]}
+    };
+    for(V3 vert: vecs){
+        vert.move(-size/2,0,-size/2);
+    }
+    return new BaseShape(vecs, lines, faceData, position);
+}
+    
+
 void setup(){
     size(800,600,P3D);
     float cameraZ = ((height/2.0) / tan(PI*60.0/360.0));
@@ -66,8 +98,8 @@ void setup(){
     top = new V3();
     right = new V3();
     shapes.add(makeCube(50, new V3(0,0,0)));
-//    shapes.add(makeCube(30, new V3(0,-60,0)));
-    camx = -height/4;
+    shapes.add(makePyramid(50, 50, new V3(0,60,0)));
+    camx = height/4;
     camy = width/4;
     cam = new V3(
         (100 + zoom * 25) * sin(camy * PI / height) * cos(camx * PI / height) + subject.x,
@@ -86,9 +118,9 @@ void mouseWheel(MouseEvent evt){
 void mousePressed(){
     V3 offset = new V3();
     if(mouseButton == LEFT){
-        offset.set(0,-5,0);
-    }else if(mouseButton == RIGHT){
         offset.set(0,5,0);
+    }else if(mouseButton == RIGHT){
+        offset.set(0,-5,0);
     }
     if(selectionMode == 0){
         V3 pointSelected = null;
@@ -158,12 +190,12 @@ void mousePressed(){
 
 void keyPressed(){
     if(key == 'w'){
-        subject.move(0,-5,0);
-    }else if(key == 's'){
         subject.move(0,5,0);
+    }else if(key == 's'){
+        subject.move(0,-5,0);
     }else if(key == 'f'){
         subject.set(0,0,0);
-        camx = -height/4;
+        camx = height/4;
         camy = width/4;
         zoom = 12;
     }else if(key == 't'){
@@ -176,8 +208,8 @@ void draw(){
     dt = (dt + 10.0/frameRate) % (TWO_PI);
     if(mousePressed && mouseButton == RIGHT){
         cursor(MOVE);
-        camx = min(max(camx - (mouseY - pmouseY), (-height / 2) + 1), (height / 2) - 1);
-        camy -= mouseX - pmouseX;
+        camx = min(max(camx - (pmouseY - mouseY), (-height / 2) + 1), (height / 2) - 1);
+        camy += mouseX - pmouseX;
     }else{
         cursor(ARROW);
     }
@@ -188,11 +220,11 @@ void draw(){
     );
     camera(
         cam.x, cam.y, cam.z,
-        subject.x, subject.y, subject.z, 0, 1, 0
+        subject.x, subject.y, subject.z, 0, -1, 0
     );
     
     V3 camAbs = cam.sub(subject);
-    right = camAbs.cross(0,-5,0).unit().mult(tan(angle/2.0) * camAbs.mag() * (float) width / height).add(subject);
+    right = camAbs.cross(0,-5,0).unit().mult(tan(angle/2.0) * -camAbs.mag() * (float) width / height).add(subject);
     top = camAbs.cross(right.sub(subject)).unit().mult(tan(angle/2.0) * -camAbs.mag()).add(subject);
     float mx = (2.0 * (width/2 - mouseX)/width) * tan(angle/2.0) * -camAbs.mag() * (float) width / height;
     float my = (2.0 * (height/2 - mouseY)/height) * tan(angle/2.0) * camAbs.mag();
@@ -222,6 +254,7 @@ void draw(){
     mouseRay.set(cam, mp);
     for(BaseShape b: shapes){
         if(selectionMode == 0){
+            stroke(0,0,0);
             for(V3 v: b.verticies){
                 if(mouseRay.distanceToPoint(v) <= 10){
                     fill(255, 255, 75 + 75 * sin(dt));
