@@ -90,6 +90,7 @@ BaseShape makePyramid(float size, float pHeight, V3 position){
 
 void setup(){
     size(800,600,P3D);
+    surface.setResizable(true);
     float cameraZ = ((height/2.0) / tan(PI*60.0/360.0));
     perspective(angle, (float) width / height, cameraZ/20.0, cameraZ*10.0);
     subject = new V3();
@@ -111,7 +112,7 @@ void setup(){
 }
 
 void mouseWheel(MouseEvent evt){
-    zoom = max(0,zoom + evt.getCount());
+    zoom = max(0,zoom - evt.getCount());
 }
 
 
