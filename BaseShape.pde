@@ -23,6 +23,27 @@ class BaseShape{
         }
     }
     
+    BaseShape(ArrayList<V3> verts, ArrayList<Line> lines, ArrayList<Line[]> faceData, V3 position){
+        this.position = position;
+        this.verticies = new V3[verts.size()];
+        for(int i = 0; i < verts.size(); i ++){
+            this.verticies[i] = verts.get(i);
+            this.verticies[i].move(position);
+        }
+        this.lines = new Line[lines.size()];
+        for(int i = 0; i < lines.size(); i ++){
+            this.lines[i] = lines.get(i);
+        }
+        faces = new Face[faceData.size()];
+        int index = 0;
+        for(Line[] lineEx: faceData){
+            println("New face[" + index + "]:");
+            printArray(lineEx);
+            faces[index] = new Face(lineEx);
+            index++;
+        }
+    }
+    
     BaseShape move(float x, float y, float z){
         for(V3 vert: verticies){
             vert.move(x, y, z);

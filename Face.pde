@@ -8,23 +8,25 @@ class Face{
         verticies = new V3[lines.length];
         verticies[0] = lines[0].point1;
         verticies[1] = lines[0].point2;
-        println("start: " + verticies[0] + " and " + verticies[1]);
+        println("\tstart: " + verticies[0] + " and " + verticies[1]);
         int index = 1;
         for(int i = 1; i < lines.length; i++){
-            V3 nextPoint;
+            V3 nextPoint = null;
             if(lines[i].point1 == verticies[index]){
                 nextPoint = lines[i].point2;
-            }else{
+            }else if(lines[i].point2 == verticies[index]){
                 nextPoint = lines[i].point1;
+            }else{
+                
             }
-            if(nextPoint != verticies[0]){
+            if(nextPoint != null && nextPoint != verticies[0]){
                 index++;
                 verticies[index] = nextPoint;
-                println("added " + verticies[index]);
+                println("\tadded " + verticies[index]);
             }
         }
-        println("total: " + (index + 1));
-        println("center: " + getCenter());
+        println("\ttotal: " + (index + 1));
+        //println("\tcenter: " + getCenter());
     }
     
     V3 getCenter(){

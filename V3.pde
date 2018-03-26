@@ -29,6 +29,20 @@ class V3{
         return this;
     }
     
+    V3 moveNeg(V3 vec){
+        this.x -= vec.x;
+        this.y -= vec.y;
+        this.z -= vec.z;
+        return this;
+    }
+    
+    V3 moveNeg(float x, float y, float z){
+        this.x -= x;
+        this.y -= y;
+        this.z -= z;
+        return this;
+    }
+    
     V3 set(float x, float y, float z){
         this.x = x;
         this.y = y;
@@ -108,6 +122,13 @@ class V3{
         translate(x,y,z);
         sphere(5);
         translate(-x,-y,-z);
+    }
+    
+    boolean equals(Object other){
+        if(other != null && other instanceof V3){
+            return (this.x == ((V3)other).x) && (this.y == ((V3)other).y) && (this.z == ((V3)other).z);
+        }
+        return false;
     }
     
     String toString(){
